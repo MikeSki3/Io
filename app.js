@@ -13,7 +13,10 @@ app.post('/sms', function(req, res) {
 });
 
 function searchResult(results){
-    console.log(results);
+    mopidy.addToQueue(results.result[0].tracks[0].uri, function(response){
+        console.log(response);
+    });
+    console.log("Queueing up: " + results.result[0].tracks[0].name + " - " + results.result[0].tracks[0].artists[0].name);
 }
 
 app.listen(3000, function(){

@@ -2,15 +2,9 @@
 
 var request = require('request');
 
-exports.searchMopidy = function (param, callback) {
-    let options = {
-        host: 'localhost',
-        path: 'mopidy/rpc',
-        port: '6680',
-        method: 'POST'
-    }
+let mopidyHttpEnd = 'http://localhost:6680/mopidy/rpc';
 
-    let mopidyHttpEnd = 'http://localhost:6680/mopidy/rpc';
+exports.searchMopidy = function (param, callback) {
     request({
             uri: mopidyHttpEnd,
             method: 'POST',
@@ -31,9 +25,34 @@ exports.searchMopidy = function (param, callback) {
 
         function (error, response, body) {
             if(error){
-                console.log('fudge...');
+                console.log('searching failed');
             }
+            if(callback)
+                callback(body);
+        });
+}
 
-            callback(body);
+exports.addToQueue = function(uri, callback){
+    request({
+        uri: mopidyHttpEnd,
+        method: 'POST',
+        'content-type': 'application/json',
+            body: {
+                "method": "core.tracklist.add",
+                "jsonrpc": "2.0",
+                "params": {
+                    "uri": uri
+                },
+                "id": 1
+            },
+            json: true
+        },
+
+        function (error, response, body) {
+            if(error){
+                console.log('add to queue failed');
+            }
+            if(callback)
+                callback(body);
         });
 }
