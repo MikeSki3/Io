@@ -8,7 +8,10 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/app.js"
+            "program": "${workspaceRoot}/app.js",
+            "env": {
+                "SESSION_SECRET": "a_secret_i_know"
+            }
         },
         {
             "type": "node",
