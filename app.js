@@ -52,14 +52,14 @@ app.post('/sms', function (req, res) {
     if (!req.session.users) {
         req.session.users = {};
     }
-    var songs = req.session.users[phoneNum];
+    var currUser = req.session.users[phoneNum];
 
     var twiml = new twilio.TwimlResponse();
     var message = "";
     if (isAction(textBod)) {
         performAction(twiml, res, textBod);
-    } else if (songs) {
-        makeSelection(textBod, phoneNum, twiml, req, res, message, songs);
+    } else if (currUser) {
+        makeSelection(textBod, phoneNum, twiml, req, res, message, currUser);
     } else {
         search(textBod, phoneNum, twiml, req, res, message);
     }
@@ -82,10 +82,21 @@ function sendResponse(twiml, res, message) {
     res.end(twiml.toString());
 }
 
-function makeSelection(textBod, phoneNum, twiml, req, res, message, songs) {
+function makeSelection(textBod, phoneNum, twiml, req, res, message, currUser) {
+    let songs = currUser.results;
     if (textBod == "!") {
         message = "Oh shit you don canceled it!";
         delete req.session.users[phoneNum];
+    } else if (textBod == ">" || textBod == "<") {
+        let add = (textBod == ">") ? 1 : -1;
+        if ((currUser.page + add) * 3 >= songs.length) {
+            message = "Already on the last page";
+        } else if (currUser.page + add < 0) {
+            message = "Already on the first page";
+        } else {
+            currUser.page += add;
+            message = buildMessageFromPage(currUser.page, songs, message);
+        }
     } else if (!isNaN(textBod) && textBod >= 0 && textBod < songs.length) {
         message = "Queueing up: " + songs[textBod].title + " - " + songs[textBod].artist;
         mopidy.addToQueue(songs[textBod].uri, true);
@@ -97,26 +108,41 @@ function makeSelection(textBod, phoneNum, twiml, req, res, message, songs) {
 }
 
 function search(textBod, phoneNum, twiml, req, res, message) {
-    req.session.users[phoneNum] = [];
+    req.session.users[phoneNum] = {
+        "results": [],
+        "page": 0
+    };
     mopidy.searchMopidy(textBod).then(function (results) {
         let tracks = results[0].tracks;
         if (tracks) {
-            message = "Respond with song choice or '!' to cancel\n";
-            let limit = tracks.length < 3 ? tracks.length : 3;
+            message = "Respond with song choice, '>' for more results, '<' for previous results, or '!' to cancel\n";
+            //put 15 of the results in the cookie
+            let limit = tracks.length < 15 ? tracks.length : 15;
             for (var i = 0; i < limit; i++) {
-                message += i + ": " + tracks[i].name + " - " + tracks[i].artists[0].name + "\n";
-                req.session.users[phoneNum].push({
+
+                req.session.users[phoneNum].results.push({
                     "uri": tracks[i].uri,
                     "title": tracks[i].name,
                     "artist": tracks[i].artists[0].name
                 });
             }
+            //pick out the 3 to return
+            message = buildMessageFromPage(0, req.session.users[phoneNum].results, message);
         } else {
             message = "Search had 0 results, don't be such a hipster";
             delete req.session.users[phoneNum];
         }
         sendResponse(twiml, res, message);
     });
+}
+
+function buildMessageFromPage(page, tracks, message) {
+    let currIndex = page * 3;
+    let limit = tracks.length < currIndex + 3 ? tracks.length : currIndex + 3;
+    for (var i = currIndex; i < limit; i++) {
+        message += i + ": " + tracks[i].title + " - " + tracks[i].artist + "\n";
+    }
+    return message;
 }
 
 app.listen(3000, function () {
