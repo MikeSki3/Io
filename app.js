@@ -13,7 +13,7 @@ var app = express();
 var actions = {
     play: {
         text: "$play",
-        action: function(twiml, res){
+        action: function (twiml, res) {
             let message = "Playing..."
             mopidy.playQueue();
             sendResponse(twiml, res, message);
@@ -21,7 +21,7 @@ var actions = {
     },
     pause: {
         text: "$pause",
-        action: function(twiml, res){
+        action: function (twiml, res) {
             let message = "Pausing...";
             mopidy.pauseQueue();
             sendResponse(twiml, res, message);
@@ -29,7 +29,7 @@ var actions = {
     },
     next: {
         text: "$next",
-        action: function(twiml, res){
+        action: function (twiml, res) {
             let message = "Playing next...";
             mopidy.playNextTrack();
             sendResponse(twiml, res, message);
@@ -56,7 +56,7 @@ app.post('/sms', function (req, res) {
 
     var twiml = new twilio.TwimlResponse();
     var message = "";
-    if(isAction(textBod)){
+    if (isAction(textBod)) {
         performAction(twiml, res, textBod);
     } else if (songs) {
         makeSelection(textBod, phoneNum, twiml, req, res, message, songs);
@@ -65,11 +65,11 @@ app.post('/sms', function (req, res) {
     }
 });
 
-function isAction(textBod){
+function isAction(textBod) {
     return textBod == actions.play.text || textBod == actions.pause.text || textBod == actions.next.text;
 }
 
-function performAction(twiml, res, textBod){
+function performAction(twiml, res, textBod) {
     let playbackAction = textBod.toLowerCase().substring(1);
     actions[playbackAction].action(twiml, res);
 }
@@ -83,7 +83,7 @@ function sendResponse(twiml, res, message) {
 }
 
 function makeSelection(textBod, phoneNum, twiml, req, res, message, songs) {
-    if(textBod == "!"){
+    if (textBod == "!") {
         message = "Oh shit you don canceled it!";
         delete req.session.users[phoneNum];
     } else if (!isNaN(textBod) && textBod >= 0 && textBod < songs.length) {
@@ -99,16 +99,21 @@ function makeSelection(textBod, phoneNum, twiml, req, res, message, songs) {
 function search(textBod, phoneNum, twiml, req, res, message) {
     req.session.users[phoneNum] = [];
     mopidy.searchMopidy(textBod).then(function (results) {
-        message = "Respond with song choice or '!' to cancel\n";
         let tracks = results[0].tracks;
-        let limit = tracks.length < 3 ? tracks.length : 3;
-        for (var i = 0; i < limit; i++) {
-            message += i + ": " + tracks[i].name + " - " + tracks[i].artists[0].name + "\n";
-            req.session.users[phoneNum].push({
-                "uri": tracks[i].uri,
-                "title": tracks[i].name,
-                "artist": tracks[i].artists[0].name
-            });
+        if (tracks) {
+            message = "Respond with song choice or '!' to cancel\n";
+            let limit = tracks.length < 3 ? tracks.length : 3;
+            for (var i = 0; i < limit; i++) {
+                message += i + ": " + tracks[i].name + " - " + tracks[i].artists[0].name + "\n";
+                req.session.users[phoneNum].push({
+                    "uri": tracks[i].uri,
+                    "title": tracks[i].name,
+                    "artist": tracks[i].artists[0].name
+                });
+            }
+        } else {
+            message = "Search had 0 results, don't be such a hipster";
+            delete req.session.users[phoneNum];
         }
         sendResponse(twiml, res, message);
     });
