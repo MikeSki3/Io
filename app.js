@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var mopidy = require('./mopidyApi/api.js');
+// require("babel-core").transform("code", options);
 
 var config = require('./config/config');
 var twilio = require('twilio');
@@ -43,6 +44,8 @@ app.use(bodyParser.urlencoded({
 app.use(session({
     secret: config.SESSION_SECRET
 }));
+
+app.use(express.static('./public'));
 
 app.post('/sms', function (req, res) {
     console.log(req.body.Body);
