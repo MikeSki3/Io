@@ -1,0 +1,25 @@
+.queue-entry {
+    font-size: 30px;
+    border: solid;
+    border-width: 1px 0;
+    border-color: lightgray;
+}
+
+.queue-entry td {
+    padding: 30px;
+}
+
+.queue {
+    border-collapse: collapse;
+    margin-left: 30px;
+    margin-top: 50px;
+}
+
+.page-header {
+    font-size: xx-large;
+    margin-left: 30px;
+}
+
+.active {
+    background-color: beige;
+}
