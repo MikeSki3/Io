@@ -9731,7 +9731,10 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-20
 /***/ (function(module, exports) {
 
 module.exports = {
-	"SESSION_SECRET": "dis_secret_do",
+	"SESSION_SECRET": "a_secret_i_know",
+	"TWILIO_SID": "AC47f9cdb2e2ab047a40b5ad7895249bfe",
+	"TWILIO_AUTH_TOKEN": "47ef1fb4b5c2f3e310ceffc1b3f4bdf0",
+	"TWILIO_NUM": "+19203951604",
 	"TWILIO_NUM_PRETTY": "(920) 395-1604"
 };
 
@@ -10138,32 +10141,55 @@ mopidy.on('state:online', function () {
   window.mopidy = mopidy;
 });
 
+function parseTrack(track) {
+  var track = track.track;
+  return {
+    "name": track.name,
+    "artist": track.artists[0].name,
+    "album": track.album.name,
+    "uri": track.uri
+  };
+}
+
+function populateComponent(comp, data) {
+  comp.setState(function (prevState) {
+    return {
+      "tracks": data.map(function (track) {
+        return _react2.default.createElement(QueueEntry, { track: parseTrack(track), key: track.track.uri + "_" + track.tlid });
+      })
+    };
+  });
+}
+
 var Queue = function (_React$Component) {
   _inherits(Queue, _React$Component);
 
-  function Queue() {
+  function Queue(props) {
     _classCallCheck(this, Queue);
 
-    return _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).call(this, props));
+
+    _this.state = { "tracks": [] };
+    return _this;
   }
 
   _createClass(Queue, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var queue = this;
+      mopidy.on("state:online", function () {
+        mopidy.tracklist.getTlTracks().then(function (data) {
+          populateComponent(queue, data);
+        });
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      function parseTrack(track) {
-        var track = track.track;
-        return {
-          "name": track.name,
-          "artist": track.artists[0].name,
-          "album": track.album.name
-        };
-      }
-      var tracks = [];
+      var queue = this;
       mopidy.on('event:tracklistChanged', function () {
         mopidy.tracklist.getTlTracks().then(function (data) {
-          var tracks = data.map(function (track) {
-            return _react2.default.createElement(QueueEntry, { track: parseTrack(track) });
-          });
+          populateComponent(queue, data);
         });
       });
 
@@ -10173,8 +10199,7 @@ var Queue = function (_React$Component) {
         _react2.default.createElement(
           'tbody',
           null,
-          _react2.default.createElement(QueueHeader, null),
-          tracks
+          this.state.tracks
         )
       );
     }
@@ -10300,8 +10325,63 @@ var PageHeader = function (_React$Component4) {
   return PageHeader;
 }(_react2.default.Component);
 
-var App = function (_React$Component5) {
-  _inherits(App, _React$Component5);
+var NowPlaying = function (_React$Component5) {
+  _inherits(NowPlaying, _React$Component5);
+
+  function NowPlaying(props) {
+    _classCallCheck(this, NowPlaying);
+
+    var _this5 = _possibleConstructorReturn(this, (NowPlaying.__proto__ || Object.getPrototypeOf(NowPlaying)).call(this, props));
+
+    _this5.state = {
+      "track": props.track ? props.track : {}
+    };
+    return _this5;
+  }
+
+  _createClass(NowPlaying, [{
+    key: 'render',
+    value: function render() {
+      var curr = this;
+      mopidy.on("state:online", function () {
+        mopidy.playback.getCurrentTlTrack().then(function (data) {
+          var track = parseTrack(data);
+          mopidy.library.getImages([track.uri]).then(function (data) {
+            track.artUri = data[track.uri][0].uri;
+            curr.setState({
+              "track": track
+            });
+          });
+        });
+      });
+      return _react2.default.createElement(
+        'div',
+        { className: 'now-playing' },
+        _react2.default.createElement('img', { src: this.state.track.artUri }),
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state.track.name
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state.track.artist
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state.track.album
+        )
+      );
+    }
+  }]);
+
+  return NowPlaying;
+}(_react2.default.Component);
+
+var App = function (_React$Component6) {
+  _inherits(App, _React$Component6);
 
   function App() {
     _classCallCheck(this, App);
@@ -10316,7 +10396,12 @@ var App = function (_React$Component5) {
         'div',
         null,
         _react2.default.createElement(PageHeader, null),
-        _react2.default.createElement(Queue, null)
+        _react2.default.createElement(
+          'div',
+          { className: 'play-area' },
+          _react2.default.createElement(Queue, null),
+          _react2.default.createElement(NowPlaying, null)
+        )
       );
     }
   }]);

@@ -12,32 +12,51 @@ mopidy.on('state:online', function(){
   window.mopidy = mopidy;
 });
 
+function parseTrack(track) {
+  var track = track.track;
+  return {
+    "name": track.name,
+    "artist": track.artists[0].name,
+    "album": track.album.name,
+    "uri": track.uri
+  }
+}
+
+function populateComponent(comp, data){
+  comp.setState(prevState => ({
+  "tracks": data.map((track) => 
+    <QueueEntry track={parseTrack(track)}  key={track.track.uri + "_" + track.tlid}/>
+  ) 
+  }));
+}
+
 class Queue extends React.Component {
-  //this will probably have to be moved up a level so that the state of the queue can have a list of tracks
-  //only a state change will update the DOM?
+  constructor(props) {
+    super(props);
+    this.state = {"tracks": []};
+  }
+
+  componentDidMount() {
+    var queue = this;
+    mopidy.on("state:online", function(){
+      mopidy.tracklist.getTlTracks().then(function(data){
+        populateComponent(queue, data);
+      });
+    });
+  }
+
   render() {
-    function parseTrack(track){
-      var track = track.track;
-      return {
-        "name": track.name,
-        "artist": track.artists[0].name,
-        "album": track.album.name
-      }
-    }
-    var tracks = [];
+    var queue = this;
     mopidy.on('event:tracklistChanged', function(){
       mopidy.tracklist.getTlTracks().then(function(data){
-        const tracks = data.map((track) => 
-          <QueueEntry track={parseTrack(track)} />
-        )
+        populateComponent(queue, data);
       });
     });
 
     return (
     <table className="queue">
       <tbody>
-        <QueueHeader />
-        {tracks}
+        {this.state.tracks}
       </tbody>
     </table>
     )
@@ -104,12 +123,47 @@ class PageHeader extends React.Component {
   }
 }
 
+class NowPlaying extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      "track": (props.track) ? props.track : {}
+    }
+  }
+
+  render(){
+    var curr = this;
+    mopidy.on("state:online", function(){
+      mopidy.playback.getCurrentTlTrack().then(function(data){
+        var track = parseTrack(data);
+        mopidy.library.getImages([track.uri]).then(function(data){
+          track.artUri = data[track.uri][0].uri;
+          curr.setState({
+            "track": track
+          })
+        });
+      });
+    });
+    return (
+      <div className="now-playing">
+        <img src={this.state.track.artUri} />
+        <div>{this.state.track.name}</div>
+        <div>{this.state.track.artist}</div>
+        <div>{this.state.track.album}</div>
+      </div>
+    )
+  }
+}
+
 class App extends React.Component {
   render() {
     return (
       <div>
         <PageHeader />
-        <Queue />
+        <div className="play-area">
+          <Queue />
+          <NowPlaying />
+        </div>
       </div>
     )
   }
