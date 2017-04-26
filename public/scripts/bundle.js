@@ -9731,10 +9731,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-20
 /***/ (function(module, exports) {
 
 module.exports = {
-	"SESSION_SECRET": "a_secret_i_know",
-	"TWILIO_SID": "AC47f9cdb2e2ab047a40b5ad7895249bfe",
-	"TWILIO_AUTH_TOKEN": "47ef1fb4b5c2f3e310ceffc1b3f4bdf0",
-	"TWILIO_NUM": "+19203951604",
+	"SESSION_SECRET": "dis_secret_do",
 	"TWILIO_NUM_PRETTY": "(920) 395-1604"
 };
 
@@ -10153,6 +10150,23 @@ var Queue = function (_React$Component) {
   _createClass(Queue, [{
     key: 'render',
     value: function render() {
+      function parseTrack(track) {
+        var track = track.track;
+        return {
+          "name": track.name,
+          "artist": track.artists[0].name,
+          "album": track.album.name
+        };
+      }
+      var tracks = [];
+      mopidy.on('event:tracklistChanged', function () {
+        mopidy.tracklist.getTlTracks().then(function (data) {
+          var tracks = data.map(function (track) {
+            return _react2.default.createElement(QueueEntry, { track: parseTrack(track) });
+          });
+        });
+      });
+
       return _react2.default.createElement(
         'table',
         { className: 'queue' },
@@ -10160,7 +10174,7 @@ var Queue = function (_React$Component) {
           'tbody',
           null,
           _react2.default.createElement(QueueHeader, null),
-          _react2.default.createElement(QueueEntry, null)
+          tracks
         )
       );
     }
@@ -10216,7 +10230,8 @@ var QueueEntry = function (_React$Component3) {
 
     var playing = props.currentlyPlaying ? true : false;
     _this3.state = {
-      currentlyPlaying: playing
+      currentlyPlaying: playing,
+      track: props.track
     };
 
     _this3.changePlayState = _this3.changePlayState.bind(_this3);
@@ -10230,6 +10245,7 @@ var QueueEntry = function (_React$Component3) {
     key: 'render',
     value: function render() {
       var currentlyPlaying = this.state.currentlyPlaying;
+      var track = this.state.track;
 
       return _react2.default.createElement(
         'tr',
@@ -10237,17 +10253,17 @@ var QueueEntry = function (_React$Component3) {
         _react2.default.createElement(
           'td',
           null,
-          'Humble'
+          track.name
         ),
         _react2.default.createElement(
           'td',
           null,
-          'Kendrick Lamar'
+          track.artist
         ),
         _react2.default.createElement(
           'td',
           null,
-          'DAMN.'
+          track.album
         )
       );
     }

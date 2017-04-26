@@ -13,12 +13,31 @@ mopidy.on('state:online', function(){
 });
 
 class Queue extends React.Component {
+  //this will probably have to be moved up a level so that the state of the queue can have a list of tracks
+  //only a state change will update the DOM?
   render() {
+    function parseTrack(track){
+      var track = track.track;
+      return {
+        "name": track.name,
+        "artist": track.artists[0].name,
+        "album": track.album.name
+      }
+    }
+    var tracks = [];
+    mopidy.on('event:tracklistChanged', function(){
+      mopidy.tracklist.getTlTracks().then(function(data){
+        const tracks = data.map((track) => 
+          <QueueEntry track={parseTrack(track)} />
+        )
+      });
+    });
+
     return (
     <table className="queue">
       <tbody>
         <QueueHeader />
-        <QueueEntry />
+        {tracks}
       </tbody>
     </table>
     )
@@ -48,7 +67,8 @@ class QueueEntry extends React.Component {
     super(props);
     var playing = (props.currentlyPlaying) ? true : false;
     this.state = {
-      currentlyPlaying: playing
+      currentlyPlaying: playing,
+      track: props.track
     };
 
     this.changePlayState = this.changePlayState.bind(this);
@@ -60,12 +80,13 @@ class QueueEntry extends React.Component {
 
   render() {
     const currentlyPlaying = this.state.currentlyPlaying;
+    const track = this.state.track;
 
     return (
         <tr className={(currentlyPlaying) ? "queue-entry active" : "queue-entry"}>
-          <td>Humble</td>
-          <td>Kendrick Lamar</td>
-          <td>DAMN.</td>
+          <td>{track.name}</td>
+          <td>{track.artist}</td>
+          <td>{track.album}</td>
         </tr>
     );
   }
