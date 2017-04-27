@@ -10139,12 +10139,14 @@ mopidy.on('state:online', function () {
 });
 
 function parseTrack(track) {
+  var tlid = track.tlid;
   var track = track.track;
   return {
     "name": track.name,
     "artist": track.artists[0].name,
     "album": track.album.name,
-    "uri": track.uri
+    "uri": track.uri,
+    "key": track.uri + "_" + tlid
   };
 }
 
@@ -10153,7 +10155,8 @@ function populateComponent(comp, data) {
     return {
       "tracks": data.map(function (track) {
         return _react2.default.createElement(QueueEntry, { track: parseTrack(track), key: track.track.uri + "_" + track.tlid });
-      })
+      }),
+      "songsPresent": true
     };
   });
 }
@@ -10281,13 +10284,25 @@ var QueueEntry = function (_React$Component3) {
 
   _createClass(QueueEntry, [{
     key: 'changePlayState',
-    value: function changePlayState() {}
+    value: function changePlayState(data) {
+      var track = data.tl_track;
+      var key = track.track.uri + "_" + track.tlid;
+      this.setState({
+        currentlyPlaying: key == this.props.track.key ? true : false
+      });
+    }
   }, {
     key: 'render',
     value: function render() {
       var currentlyPlaying = this.state.currentlyPlaying;
       var track = this.state.track;
-
+      var entry = this;
+      mopidy.on("event:trackPlaybackStarted", function (data) {
+        entry.changePlayState(data);
+      });
+      mopidy.on("event:trackPlaybackResumed", function (data) {
+        entry.changePlayState(data);
+      });
       return _react2.default.createElement(
         'tr',
         { className: currentlyPlaying ? "queue-entry active" : "queue-entry" },
@@ -10388,8 +10403,8 @@ var NowPlaying = function (_React$Component5) {
       var curr = this;
       mopidy.on("state:online", function () {
         curr.getCurrentTrack(curr);
-        mopidy.on("event:trackPlaybackStarted", function () {
-          this.getCurrentTrack(curr);
+        mopidy.on("event:trackPlaybackStarted", function (data) {
+          curr.getCurrentTrack(curr);
         });
       });
       var nowPlayingDiv = _react2.default.createElement(

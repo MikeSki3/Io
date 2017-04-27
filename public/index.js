@@ -13,12 +13,14 @@ mopidy.on('state:online', function(){
 });
 
 function parseTrack(track) {
+  var tlid = track.tlid;
   var track = track.track;
   return {
     "name": track.name,
     "artist": track.artists[0].name,
     "album": track.album.name,
-    "uri": track.uri
+    "uri": track.uri,
+    "key": track.uri + "_" + tlid
   }
 }
 
@@ -26,7 +28,8 @@ function populateComponent(comp, data){
   comp.setState(prevState => ({
   "tracks": data.map((track) => 
     <QueueEntry track={parseTrack(track)}  key={track.track.uri + "_" + track.tlid}/>
-  ) 
+  ),
+  "songsPresent": true 
   }));
 }
 
@@ -58,7 +61,7 @@ class Queue extends React.Component {
     var queue = this;
     mopidy.on('event:tracklistChanged', function(){
       mopidy.tracklist.getTlTracks().then(function(data){
-                if(data.length > 0) {
+        if(data.length > 0) {
           populateComponent(queue, data);
         } else {
           queue.setState({
@@ -110,14 +113,24 @@ class QueueEntry extends React.Component {
     this.changePlayState = this.changePlayState.bind(this);
   }
 
-  changePlayState() {
-
+  changePlayState(data) {
+    var track = data.tl_track;
+    var key = track.track.uri + "_" + track.tlid;
+    this.setState({
+      currentlyPlaying: (key == this.props.track.key) ? true : false
+    })
   }
 
   render() {
     const currentlyPlaying = this.state.currentlyPlaying;
     const track = this.state.track;
-
+    const entry = this;
+    mopidy.on("event:trackPlaybackStarted", function(data){
+      entry.changePlayState(data);
+    });
+    mopidy.on("event:trackPlaybackResumed", function(data){
+      entry.changePlayState(data);
+    });
     return (
         <tr className={(currentlyPlaying) ? "queue-entry active" : "queue-entry"}>
           <td>{track.name}</td>
@@ -178,8 +191,8 @@ class NowPlaying extends React.Component {
     var curr = this;
     mopidy.on("state:online", function(){
       curr.getCurrentTrack(curr);
-      mopidy.on("event:trackPlaybackStarted", function(){
-        this.getCurrentTrack(curr);
+      mopidy.on("event:trackPlaybackStarted", function(data){
+        curr.getCurrentTrack(curr);
       });
     });
     const nowPlayingDiv = (
