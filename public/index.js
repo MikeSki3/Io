@@ -33,14 +33,23 @@ function populateComponent(comp, data){
 class Queue extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {"tracks": []};
+    this.state = {
+      "tracks": [],
+      "songsPresent": true
+    };
   }
 
   componentDidMount() {
     var queue = this;
     mopidy.on("state:online", function(){
       mopidy.tracklist.getTlTracks().then(function(data){
-        populateComponent(queue, data);
+        if(data.length > 0) {
+          populateComponent(queue, data);
+        } else {
+          queue.setState({
+            "songsPresent": false
+          })
+        }
       });
     });
   }
@@ -49,16 +58,24 @@ class Queue extends React.Component {
     var queue = this;
     mopidy.on('event:tracklistChanged', function(){
       mopidy.tracklist.getTlTracks().then(function(data){
-        populateComponent(queue, data);
+                if(data.length > 0) {
+          populateComponent(queue, data);
+        } else {
+          queue.setState({
+            "songsPresent": false
+          })
+        }
       });
     });
-
-    return (
-    <table className="queue">
+    const queueTable = (
+      <table className="queue">
       <tbody>
         {this.state.tracks}
       </tbody>
     </table>
+    )
+    return (
+      (this.state.songsPresent) ? queueTable : <p className="queue">No songs in queue</p>
     )
   }
 }
@@ -127,30 +144,54 @@ class NowPlaying extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      "track": (props.track) ? props.track : {}
+      "track": (props.track) ? props.track : {},
+      "isPlaying": true
     }
   }
 
-  render(){
-    var curr = this;
-    mopidy.on("state:online", function(){
-      mopidy.playback.getCurrentTlTrack().then(function(data){
+  getCurrentTrack(curr){
+    mopidy.playback.getCurrentTlTrack().then(function (data) {
+      if (data != null) {
         var track = parseTrack(data);
-        mopidy.library.getImages([track.uri]).then(function(data){
+        mopidy.library.getImages([track.uri]).then(function (data) {
           track.artUri = data[track.uri][0].uri;
           curr.setState({
             "track": track
           })
         });
+      } else {
+        var track = {
+          "artUri": "./img/coolAlbumArt.png",
+          "name": "Nothing",
+          "artist": "Nada",
+          "album": "Zilch"
+        }
+        curr.setState({
+          "track": track,
+          "isPlaying": false
+        })
+      }
+    })
+  }
+
+  render(){
+    var curr = this;
+    mopidy.on("state:online", function(){
+      curr.getCurrentTrack(curr);
+      mopidy.on("event:trackPlaybackStarted", function(){
+        this.getCurrentTrack(curr);
       });
     });
-    return (
+    const nowPlayingDiv = (
       <div className="now-playing">
         <img src={this.state.track.artUri} />
         <div>{this.state.track.name}</div>
         <div>{this.state.track.artist}</div>
         <div>{this.state.track.album}</div>
       </div>
+    )
+    return (
+      nowPlayingDiv
     )
   }
 }

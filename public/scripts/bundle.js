@@ -9731,10 +9731,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-20
 /***/ (function(module, exports) {
 
 module.exports = {
-	"SESSION_SECRET": "a_secret_i_know",
-	"TWILIO_SID": "AC47f9cdb2e2ab047a40b5ad7895249bfe",
-	"TWILIO_AUTH_TOKEN": "47ef1fb4b5c2f3e310ceffc1b3f4bdf0",
-	"TWILIO_NUM": "+19203951604",
+	"SESSION_SECRET": "dis_secret_do",
 	"TWILIO_NUM_PRETTY": "(920) 395-1604"
 };
 
@@ -10169,7 +10166,10 @@ var Queue = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).call(this, props));
 
-    _this.state = { "tracks": [] };
+    _this.state = {
+      "tracks": [],
+      "songsPresent": true
+    };
     return _this;
   }
 
@@ -10179,7 +10179,13 @@ var Queue = function (_React$Component) {
       var queue = this;
       mopidy.on("state:online", function () {
         mopidy.tracklist.getTlTracks().then(function (data) {
-          populateComponent(queue, data);
+          if (data.length > 0) {
+            populateComponent(queue, data);
+          } else {
+            queue.setState({
+              "songsPresent": false
+            });
+          }
         });
       });
     }
@@ -10189,11 +10195,16 @@ var Queue = function (_React$Component) {
       var queue = this;
       mopidy.on('event:tracklistChanged', function () {
         mopidy.tracklist.getTlTracks().then(function (data) {
-          populateComponent(queue, data);
+          if (data.length > 0) {
+            populateComponent(queue, data);
+          } else {
+            queue.setState({
+              "songsPresent": false
+            });
+          }
         });
       });
-
-      return _react2.default.createElement(
+      var queueTable = _react2.default.createElement(
         'table',
         { className: 'queue' },
         _react2.default.createElement(
@@ -10201,6 +10212,11 @@ var Queue = function (_React$Component) {
           null,
           this.state.tracks
         )
+      );
+      return this.state.songsPresent ? queueTable : _react2.default.createElement(
+        'p',
+        { className: 'queue' },
+        'No songs in queue'
       );
     }
   }]);
@@ -10334,17 +10350,17 @@ var NowPlaying = function (_React$Component5) {
     var _this5 = _possibleConstructorReturn(this, (NowPlaying.__proto__ || Object.getPrototypeOf(NowPlaying)).call(this, props));
 
     _this5.state = {
-      "track": props.track ? props.track : {}
+      "track": props.track ? props.track : {},
+      "isPlaying": true
     };
     return _this5;
   }
 
   _createClass(NowPlaying, [{
-    key: 'render',
-    value: function render() {
-      var curr = this;
-      mopidy.on("state:online", function () {
-        mopidy.playback.getCurrentTlTrack().then(function (data) {
+    key: 'getCurrentTrack',
+    value: function getCurrentTrack(curr) {
+      mopidy.playback.getCurrentTlTrack().then(function (data) {
+        if (data != null) {
           var track = parseTrack(data);
           mopidy.library.getImages([track.uri]).then(function (data) {
             track.artUri = data[track.uri][0].uri;
@@ -10352,9 +10368,31 @@ var NowPlaying = function (_React$Component5) {
               "track": track
             });
           });
+        } else {
+          var track = {
+            "artUri": "./img/coolAlbumArt.png",
+            "name": "Nothing",
+            "artist": "Nada",
+            "album": "Zilch"
+          };
+          curr.setState({
+            "track": track,
+            "isPlaying": false
+          });
+        }
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var curr = this;
+      mopidy.on("state:online", function () {
+        curr.getCurrentTrack(curr);
+        mopidy.on("event:trackPlaybackStarted", function () {
+          this.getCurrentTrack(curr);
         });
       });
-      return _react2.default.createElement(
+      var nowPlayingDiv = _react2.default.createElement(
         'div',
         { className: 'now-playing' },
         _react2.default.createElement('img', { src: this.state.track.artUri }),
@@ -10374,6 +10412,7 @@ var NowPlaying = function (_React$Component5) {
           this.state.track.album
         )
       );
+      return nowPlayingDiv;
     }
   }]);
 
