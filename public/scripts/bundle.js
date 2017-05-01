@@ -9731,7 +9731,10 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-20
 /***/ (function(module, exports) {
 
 module.exports = {
-	"SESSION_SECRET": "dis_secret_do",
+	"SESSION_SECRET": "a_secret_i_know",
+	"TWILIO_SID": "AC47f9cdb2e2ab047a40b5ad7895249bfe",
+	"TWILIO_AUTH_TOKEN": "47ef1fb4b5c2f3e310ceffc1b3f4bdf0",
+	"TWILIO_NUM": "+19203951604",
 	"TWILIO_NUM_PRETTY": "(920) 395-1604"
 };
 
@@ -10158,71 +10161,8 @@ function populateComponent(comp, data) {
   });
 }
 
-var Queue = function (_React$Component) {
-  _inherits(Queue, _React$Component);
-
-  function Queue(props) {
-    _classCallCheck(this, Queue);
-
-    return _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).call(this, props));
-    // this.state = {
-    //   "tracks": [],
-    //   "songsPresent": true
-    // };
-  }
-
-  // componentDidMount() {
-  //   var queue = this;
-  //   mopidy.on("state:online", function(){
-  //     mopidy.tracklist.getTlTracks().then(function(data){
-  //       if(data.length > 0) {
-  //         populateComponent(queue, data);
-  //       } else {
-  //         queue.setState({
-  //           "songsPresent": false
-  //         })
-  //       }
-  //     });
-  //   });
-  // }
-
-  _createClass(Queue, [{
-    key: 'render',
-    value: function render() {
-      // var queue = this;
-      // mopidy.on('event:tracklistChanged', function(){
-      //   mopidy.tracklist.getTlTracks().then(function(data){
-      //     if(data.length > 0) {
-      //       populateComponent(queue, data);
-      //     } else {
-      //       queue.setState({
-      //         "songsPresent": false
-      //       })
-      //     }
-      //   });
-      // });
-      var queueTable = _react2.default.createElement(
-        'table',
-        { className: 'queue' },
-        _react2.default.createElement(
-          'tbody',
-          null,
-          this.props.tracks
-        )
-      );
-      return this.props.tracks.length > 0 ? queueTable : _react2.default.createElement(
-        'p',
-        { className: 'queue' },
-        'No songs in queue'
-      );
-    }
-  }]);
-
-  return Queue;
-}(_react2.default.Component);
-
-var QueueHeader = function (_React$Component2) {
-  _inherits(QueueHeader, _React$Component2);
+var QueueHeader = function (_React$Component) {
+  _inherits(QueueHeader, _React$Component);
 
   function QueueHeader() {
     _classCallCheck(this, QueueHeader);
@@ -10258,42 +10198,63 @@ var QueueHeader = function (_React$Component2) {
   return QueueHeader;
 }(_react2.default.Component);
 
+var Queue = function (_React$Component2) {
+  _inherits(Queue, _React$Component2);
+
+  function Queue() {
+    _classCallCheck(this, Queue);
+
+    return _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).apply(this, arguments));
+  }
+
+  _createClass(Queue, [{
+    key: 'render',
+
+    // constructor(props) {
+    //   super(props);
+    // }
+
+    value: function render() {
+      var tracks = getQueueEntryArray(this.props.nowPlaying.key, this.props.tracks);
+      var queueTable = _react2.default.createElement(
+        'table',
+        { className: 'queue' },
+        _react2.default.createElement(
+          'tbody',
+          null,
+          tracks
+        )
+      );
+      return this.props.tracks.length > 0 ? queueTable : _react2.default.createElement(
+        'p',
+        { className: 'queue' },
+        'No songs in queue'
+      );
+    }
+  }]);
+
+  return Queue;
+}(_react2.default.Component);
+
 var QueueEntry = function (_React$Component3) {
   _inherits(QueueEntry, _React$Component3);
 
-  function QueueEntry(props) {
+  function QueueEntry() {
     _classCallCheck(this, QueueEntry);
 
-    return _possibleConstructorReturn(this, (QueueEntry.__proto__ || Object.getPrototypeOf(QueueEntry)).call(this, props));
-    // var playing = (props.currentlyPlaying) ? true : false;
-    // this.state = {
-    //   currentlyPlaying: playing,
-    //   track: props.track
-    // };
-
-    // this.changePlayState = this.changePlayState.bind(this);
+    return _possibleConstructorReturn(this, (QueueEntry.__proto__ || Object.getPrototypeOf(QueueEntry)).apply(this, arguments));
   }
-
-  // changePlayState(data) {
-  //   var track = data.tl_track;
-  //   var key = track.track.uri + "_" + track.tlid;
-  //   this.setState({
-  //     currentlyPlaying: (key == this.props.track.key) ? true : false
-  //   })
-  // }
 
   _createClass(QueueEntry, [{
     key: 'render',
+
+    // constructor(props){
+    //   super(props);
+    // }
+
     value: function render() {
       var currentlyPlaying = this.props.nowPlaying;
       var track = this.props.track;
-      var entry = this;
-      // mopidy.on("event:trackPlaybackStarted", function(data){
-      //   entry.changePlayState(data);
-      // });
-      // mopidy.on("event:trackPlaybackResumed", function(data){
-      //   entry.changePlayState(data);
-      // });
       return (
         // <tr className={"queue-entry"}>
         _react2.default.createElement(
@@ -10353,72 +10314,38 @@ var PageHeader = function (_React$Component4) {
 var NowPlaying = function (_React$Component5) {
   _inherits(NowPlaying, _React$Component5);
 
-  function NowPlaying(props) {
+  function NowPlaying() {
     _classCallCheck(this, NowPlaying);
 
-    var _this5 = _possibleConstructorReturn(this, (NowPlaying.__proto__ || Object.getPrototypeOf(NowPlaying)).call(this, props));
-
-    _this5.state = {
-      "track": props.track ? props.track : {},
-      "isPlaying": true
-    };
-    return _this5;
+    return _possibleConstructorReturn(this, (NowPlaying.__proto__ || Object.getPrototypeOf(NowPlaying)).apply(this, arguments));
   }
 
   _createClass(NowPlaying, [{
-    key: 'getCurrentTrack',
-    value: function getCurrentTrack(curr) {
-      mopidy.playback.getCurrentTlTrack().then(function (data) {
-        if (data != null) {
-          var track = parseTrack(data);
-          mopidy.library.getImages([track.uri]).then(function (data) {
-            track.artUri = data[track.uri][0].uri;
-            curr.setState({
-              "track": track
-            });
-          });
-        } else {
-          var track = {
-            "artUri": "./img/coolAlbumArt.png",
-            "name": "Nothing",
-            "artist": "Nada",
-            "album": "Zilch"
-          };
-          curr.setState({
-            "track": track,
-            "isPlaying": false
-          });
-        }
-      });
-    }
-  }, {
     key: 'render',
+
+    // constructor(props){
+    //   super(props);
+    // }
+
     value: function render() {
-      var curr = this;
-      mopidy.on("state:online", function () {
-        curr.getCurrentTrack(curr);
-        mopidy.on("event:trackPlaybackStarted", function (data) {
-          curr.getCurrentTrack(curr);
-        });
-      });
       var nowPlayingDiv = _react2.default.createElement(
         'div',
         { className: 'now-playing' },
-        _react2.default.createElement('img', { src: this.state.track.artUri }),
+        _react2.default.createElement('img', { src: this.props.track.artUri }),
         _react2.default.createElement(
           'div',
           null,
-          this.state.track.name
+          this.props.track.name
         ),
         _react2.default.createElement(
           'div',
           null,
-          this.state.track.artist
+          this.props.track.artist
         ),
         _react2.default.createElement(
           'div',
           null,
-          this.state.track.album
+          this.props.track.album
         )
       );
       return nowPlayingDiv;
@@ -10428,11 +10355,20 @@ var NowPlaying = function (_React$Component5) {
   return NowPlaying;
 }(_react2.default.Component);
 
-function getTracksArray(nowPlayingKey, data) {
+function getQueueEntryArray(nowPlayingKey, data) {
+  var tracks = [];
+  for (var i = 0; i < data.length; i++) {
+    var track = data[i];
+    tracks.push(_react2.default.createElement(QueueEntry, { track: track, key: track.key, nowPlaying: nowPlayingKey == track.key }));
+  }
+  return tracks;
+}
+
+function getTracksArray(data) {
   var tracks = [];
   for (var i = 0; i < data.length; i++) {
     var track = parseTrack(data[i]);
-    tracks.push(_react2.default.createElement(QueueEntry, { track: track, key: track.key, nowPlaying: nowPlayingKey == track.key }));
+    tracks.push(track);
   }
   return tracks;
 }
@@ -10442,7 +10378,7 @@ function getNewQueueTracks(app) {
   mopidy.tracklist.getTlTracks().then(function (data) {
     if (data.length > 0) {
       app.setState({
-        "tracks": getTracksArray(nowPlayingKey, data)
+        "tracks": getTracksArray(data)
       });
     } else {
       app.setState({
@@ -10452,25 +10388,42 @@ function getNewQueueTracks(app) {
   });
 }
 
-function changeQueuePlayState(app, data) {
-  var currTrack = parseTrack(data.tl_track);
-  // var currTracks = app.state.tracks;
-  // for(var i = 0; i < currTracks.length; i++){
-  //   if(currTrack.key == currTracks[i].props.track.key){
-  //     currTracks[i].setState({
-  //       "nowPlaying": true
-  //     })
-  //   } else {
-  //     currTracks[i].setState({
-  //       "nowPlaying": false
-  //     })
-  //   }
-  // }
-  // console.log(app);
-  // console.log(app.state.tracks);
-  app.setState({
-    "nowPlaying": currTrack
-  });
+function getCurrentTrack(app, data) {
+  var track = {};
+  var getTrackArt = function getTrackArt(trackMinusArt) {
+    track = parseTrack(trackMinusArt.tl_track ? trackMinusArt.tl_track : trackMinusArt);
+    return mopidy.library.getImages([track.uri]);
+  };
+
+  if (data) {
+    getTrackArt(data).then(function (data) {
+      track.artUri = data[track.uri][0].uri;
+      app.setState({
+        "nowPlaying": track
+      });
+    });
+  } else {
+    mopidy.playback.getCurrentTlTrack().then(function (data) {
+      if (data != null) {
+        getTrackArt(data).then(function (data) {
+          track.artUri = data[track.uri][0].uri;
+          app.setState({
+            "nowPlaying": track
+          });
+        });
+      } else {
+        track = {
+          "artUri": "./img/coolAlbumArt.png",
+          "name": "Nothing",
+          "artist": "Nada",
+          "album": "Zilch"
+        };
+      }
+      app.setState({
+        "nowPlaying": track
+      });
+    });
+  }
 }
 
 function setEvents(app) {
@@ -10479,10 +10432,11 @@ function setEvents(app) {
   });
 
   mopidy.on("event:trackPlaybackStarted", function (data) {
-    changeQueuePlayState(app, data);
+    getCurrentTrack(app, data);
   });
+
   mopidy.on("event:trackPlaybackResumed", function (data) {
-    changeQueuePlayState(app, data);
+    getCurrentTrack(app, data);
   });
 }
 
@@ -10490,7 +10444,7 @@ function initUi(app) {
   mopidy.on("state:online", function () {
     window.mopidy = mopidy;
     getNewQueueTracks(app);
-
+    getCurrentTrack(app);
     setEvents(app);
   });
 }
@@ -10521,8 +10475,8 @@ var App = function (_React$Component6) {
         _react2.default.createElement(
           'div',
           { className: 'play-area' },
-          _react2.default.createElement(Queue, { tracks: this.state.tracks, curr: this.state.nowPlaying }),
-          _react2.default.createElement(NowPlaying, { curr: this.state.nowPlaying })
+          _react2.default.createElement(Queue, { tracks: this.state.tracks, nowPlaying: this.state.nowPlaying }),
+          _react2.default.createElement(NowPlaying, { track: this.state.nowPlaying })
         )
       );
     }
