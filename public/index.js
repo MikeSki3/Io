@@ -8,9 +8,6 @@ var mopidy = new Mopidy({
 });
 
 mopidy.on(console.log.bind(console));
-mopidy.on('state:online', function(){
-  window.mopidy = mopidy;
-});
 
 function parseTrack(track) {
   var tlid = track.tlid;
@@ -36,49 +33,49 @@ function populateComponent(comp, data){
 class Queue extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      "tracks": [],
-      "songsPresent": true
-    };
+    // this.state = {
+    //   "tracks": [],
+    //   "songsPresent": true
+    // };
   }
 
-  componentDidMount() {
-    var queue = this;
-    mopidy.on("state:online", function(){
-      mopidy.tracklist.getTlTracks().then(function(data){
-        if(data.length > 0) {
-          populateComponent(queue, data);
-        } else {
-          queue.setState({
-            "songsPresent": false
-          })
-        }
-      });
-    });
-  }
+  // componentDidMount() {
+  //   var queue = this;
+  //   mopidy.on("state:online", function(){
+  //     mopidy.tracklist.getTlTracks().then(function(data){
+  //       if(data.length > 0) {
+  //         populateComponent(queue, data);
+  //       } else {
+  //         queue.setState({
+  //           "songsPresent": false
+  //         })
+  //       }
+  //     });
+  //   });
+  // }
 
   render() {
-    var queue = this;
-    mopidy.on('event:tracklistChanged', function(){
-      mopidy.tracklist.getTlTracks().then(function(data){
-        if(data.length > 0) {
-          populateComponent(queue, data);
-        } else {
-          queue.setState({
-            "songsPresent": false
-          })
-        }
-      });
-    });
+    // var queue = this;
+    // mopidy.on('event:tracklistChanged', function(){
+    //   mopidy.tracklist.getTlTracks().then(function(data){
+    //     if(data.length > 0) {
+    //       populateComponent(queue, data);
+    //     } else {
+    //       queue.setState({
+    //         "songsPresent": false
+    //       })
+    //     }
+    //   });
+    // });
     const queueTable = (
       <table className="queue">
       <tbody>
-        {this.state.tracks}
+        {this.props.tracks}
       </tbody>
     </table>
     )
     return (
-      (this.state.songsPresent) ? queueTable : <p className="queue">No songs in queue</p>
+      (this.props.tracks.length > 0) ? queueTable : <p className="queue">No songs in queue</p>
     )
   }
 }
@@ -104,34 +101,35 @@ class QueueHeader extends React.Component {
 class QueueEntry extends React.Component {
   constructor(props){
     super(props);
-    var playing = (props.currentlyPlaying) ? true : false;
-    this.state = {
-      currentlyPlaying: playing,
-      track: props.track
-    };
+    // var playing = (props.currentlyPlaying) ? true : false;
+    // this.state = {
+    //   currentlyPlaying: playing,
+    //   track: props.track
+    // };
 
-    this.changePlayState = this.changePlayState.bind(this);
+    // this.changePlayState = this.changePlayState.bind(this);
   }
 
-  changePlayState(data) {
-    var track = data.tl_track;
-    var key = track.track.uri + "_" + track.tlid;
-    this.setState({
-      currentlyPlaying: (key == this.props.track.key) ? true : false
-    })
-  }
+  // changePlayState(data) {
+  //   var track = data.tl_track;
+  //   var key = track.track.uri + "_" + track.tlid;
+  //   this.setState({
+  //     currentlyPlaying: (key == this.props.track.key) ? true : false
+  //   })
+  // }
 
   render() {
-    const currentlyPlaying = this.state.currentlyPlaying;
-    const track = this.state.track;
+    const currentlyPlaying = this.props.nowPlaying;
+    const track = this.props.track;
     const entry = this;
-    mopidy.on("event:trackPlaybackStarted", function(data){
-      entry.changePlayState(data);
-    });
-    mopidy.on("event:trackPlaybackResumed", function(data){
-      entry.changePlayState(data);
-    });
+    // mopidy.on("event:trackPlaybackStarted", function(data){
+    //   entry.changePlayState(data);
+    // });
+    // mopidy.on("event:trackPlaybackResumed", function(data){
+    //   entry.changePlayState(data);
+    // });
     return (
+      // <tr className={"queue-entry"}>
         <tr className={(currentlyPlaying) ? "queue-entry active" : "queue-entry"}>
           <td>{track.name}</td>
           <td>{track.artist}</td>
@@ -209,14 +207,91 @@ class NowPlaying extends React.Component {
   }
 }
 
+function getTracksArray(nowPlayingKey, data){
+  var tracks = [];
+  for(var i = 0; i < data.length; i++){
+    var track = parseTrack(data[i]);
+    tracks.push(<QueueEntry track={track}  key={track.key} nowPlaying={nowPlayingKey == track.key}/>);
+  }
+  return tracks;
+}
+
+function getNewQueueTracks(app){
+  var nowPlayingKey = (app.state.nowPlaying) ? app.state.nowPlaying.key : {};
+  mopidy.tracklist.getTlTracks().then(function (data) {
+    if (data.length > 0) {
+      app.setState({
+        "tracks": getTracksArray(nowPlayingKey, data)
+      });
+    } else {
+      app.setState({
+        "tracks": []
+      })
+    }
+  });
+}
+
+function changeQueuePlayState(app, data){
+  var currTrack = parseTrack(data.tl_track);
+  // var currTracks = app.state.tracks;
+  // for(var i = 0; i < currTracks.length; i++){
+  //   if(currTrack.key == currTracks[i].props.track.key){
+  //     currTracks[i].setState({
+  //       "nowPlaying": true
+  //     })
+  //   } else {
+  //     currTracks[i].setState({
+  //       "nowPlaying": false
+  //     })
+  //   }
+  // }
+  // console.log(app);
+  // console.log(app.state.tracks);
+  app.setState({
+    "nowPlaying": currTrack
+  })
+}
+
+function setEvents(app){
+   mopidy.on('event:tracklistChanged', function(){
+    getNewQueueTracks(app);
+   });
+
+   mopidy.on("event:trackPlaybackStarted", function(data){
+      changeQueuePlayState(app, data);
+    });
+    mopidy.on("event:trackPlaybackResumed", function(data){
+      changeQueuePlayState(app, data);
+    });
+}
+
+function initUi(app){
+  mopidy.on("state:online", function(){
+    window.mopidy = mopidy;
+    getNewQueueTracks(app);
+
+    setEvents(app);
+  });
+}
+
 class App extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      "tracks": [],
+      "nowPlaying": {}
+    }
+    initUi(this);
+  }
+
   render() {
     return (
       <div>
         <PageHeader />
         <div className="play-area">
-          <Queue />
-          <NowPlaying />
+          <Queue tracks={this.state.tracks} curr={this.state.nowPlaying}/>
+          <NowPlaying curr={this.state.nowPlaying}/>
         </div>
       </div>
     )

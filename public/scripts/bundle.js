@@ -10134,9 +10134,6 @@ var mopidy = new _mopidy2.default({
 });
 
 mopidy.on(console.log.bind(console));
-mopidy.on('state:online', function () {
-  window.mopidy = mopidy;
-});
 
 function parseTrack(track) {
   var tlid = track.tlid;
@@ -10167,56 +10164,53 @@ var Queue = function (_React$Component) {
   function Queue(props) {
     _classCallCheck(this, Queue);
 
-    var _this = _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).call(this, props));
-
-    _this.state = {
-      "tracks": [],
-      "songsPresent": true
-    };
-    return _this;
+    return _possibleConstructorReturn(this, (Queue.__proto__ || Object.getPrototypeOf(Queue)).call(this, props));
+    // this.state = {
+    //   "tracks": [],
+    //   "songsPresent": true
+    // };
   }
 
+  // componentDidMount() {
+  //   var queue = this;
+  //   mopidy.on("state:online", function(){
+  //     mopidy.tracklist.getTlTracks().then(function(data){
+  //       if(data.length > 0) {
+  //         populateComponent(queue, data);
+  //       } else {
+  //         queue.setState({
+  //           "songsPresent": false
+  //         })
+  //       }
+  //     });
+  //   });
+  // }
+
   _createClass(Queue, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var queue = this;
-      mopidy.on("state:online", function () {
-        mopidy.tracklist.getTlTracks().then(function (data) {
-          if (data.length > 0) {
-            populateComponent(queue, data);
-          } else {
-            queue.setState({
-              "songsPresent": false
-            });
-          }
-        });
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
-      var queue = this;
-      mopidy.on('event:tracklistChanged', function () {
-        mopidy.tracklist.getTlTracks().then(function (data) {
-          if (data.length > 0) {
-            populateComponent(queue, data);
-          } else {
-            queue.setState({
-              "songsPresent": false
-            });
-          }
-        });
-      });
+      // var queue = this;
+      // mopidy.on('event:tracklistChanged', function(){
+      //   mopidy.tracklist.getTlTracks().then(function(data){
+      //     if(data.length > 0) {
+      //       populateComponent(queue, data);
+      //     } else {
+      //       queue.setState({
+      //         "songsPresent": false
+      //       })
+      //     }
+      //   });
+      // });
       var queueTable = _react2.default.createElement(
         'table',
         { className: 'queue' },
         _react2.default.createElement(
           'tbody',
           null,
-          this.state.tracks
+          this.props.tracks
         )
       );
-      return this.state.songsPresent ? queueTable : _react2.default.createElement(
+      return this.props.tracks.length > 0 ? queueTable : _react2.default.createElement(
         'p',
         { className: 'queue' },
         'No songs in queue'
@@ -10270,56 +10264,56 @@ var QueueEntry = function (_React$Component3) {
   function QueueEntry(props) {
     _classCallCheck(this, QueueEntry);
 
-    var _this3 = _possibleConstructorReturn(this, (QueueEntry.__proto__ || Object.getPrototypeOf(QueueEntry)).call(this, props));
+    return _possibleConstructorReturn(this, (QueueEntry.__proto__ || Object.getPrototypeOf(QueueEntry)).call(this, props));
+    // var playing = (props.currentlyPlaying) ? true : false;
+    // this.state = {
+    //   currentlyPlaying: playing,
+    //   track: props.track
+    // };
 
-    var playing = props.currentlyPlaying ? true : false;
-    _this3.state = {
-      currentlyPlaying: playing,
-      track: props.track
-    };
-
-    _this3.changePlayState = _this3.changePlayState.bind(_this3);
-    return _this3;
+    // this.changePlayState = this.changePlayState.bind(this);
   }
 
+  // changePlayState(data) {
+  //   var track = data.tl_track;
+  //   var key = track.track.uri + "_" + track.tlid;
+  //   this.setState({
+  //     currentlyPlaying: (key == this.props.track.key) ? true : false
+  //   })
+  // }
+
   _createClass(QueueEntry, [{
-    key: 'changePlayState',
-    value: function changePlayState(data) {
-      var track = data.tl_track;
-      var key = track.track.uri + "_" + track.tlid;
-      this.setState({
-        currentlyPlaying: key == this.props.track.key ? true : false
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
-      var currentlyPlaying = this.state.currentlyPlaying;
-      var track = this.state.track;
+      var currentlyPlaying = this.props.nowPlaying;
+      var track = this.props.track;
       var entry = this;
-      mopidy.on("event:trackPlaybackStarted", function (data) {
-        entry.changePlayState(data);
-      });
-      mopidy.on("event:trackPlaybackResumed", function (data) {
-        entry.changePlayState(data);
-      });
-      return _react2.default.createElement(
-        'tr',
-        { className: currentlyPlaying ? "queue-entry active" : "queue-entry" },
+      // mopidy.on("event:trackPlaybackStarted", function(data){
+      //   entry.changePlayState(data);
+      // });
+      // mopidy.on("event:trackPlaybackResumed", function(data){
+      //   entry.changePlayState(data);
+      // });
+      return (
+        // <tr className={"queue-entry"}>
         _react2.default.createElement(
-          'td',
-          null,
-          track.name
-        ),
-        _react2.default.createElement(
-          'td',
-          null,
-          track.artist
-        ),
-        _react2.default.createElement(
-          'td',
-          null,
-          track.album
+          'tr',
+          { className: currentlyPlaying ? "queue-entry active" : "queue-entry" },
+          _react2.default.createElement(
+            'td',
+            null,
+            track.name
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            track.artist
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            track.album
+          )
         )
       );
     }
@@ -10434,13 +10428,87 @@ var NowPlaying = function (_React$Component5) {
   return NowPlaying;
 }(_react2.default.Component);
 
+function getTracksArray(nowPlayingKey, data) {
+  var tracks = [];
+  for (var i = 0; i < data.length; i++) {
+    var track = parseTrack(data[i]);
+    tracks.push(_react2.default.createElement(QueueEntry, { track: track, key: track.key, nowPlaying: nowPlayingKey == track.key }));
+  }
+  return tracks;
+}
+
+function getNewQueueTracks(app) {
+  var nowPlayingKey = app.state.nowPlaying ? app.state.nowPlaying.key : {};
+  mopidy.tracklist.getTlTracks().then(function (data) {
+    if (data.length > 0) {
+      app.setState({
+        "tracks": getTracksArray(nowPlayingKey, data)
+      });
+    } else {
+      app.setState({
+        "tracks": []
+      });
+    }
+  });
+}
+
+function changeQueuePlayState(app, data) {
+  var currTrack = parseTrack(data.tl_track);
+  // var currTracks = app.state.tracks;
+  // for(var i = 0; i < currTracks.length; i++){
+  //   if(currTrack.key == currTracks[i].props.track.key){
+  //     currTracks[i].setState({
+  //       "nowPlaying": true
+  //     })
+  //   } else {
+  //     currTracks[i].setState({
+  //       "nowPlaying": false
+  //     })
+  //   }
+  // }
+  // console.log(app);
+  // console.log(app.state.tracks);
+  app.setState({
+    "nowPlaying": currTrack
+  });
+}
+
+function setEvents(app) {
+  mopidy.on('event:tracklistChanged', function () {
+    getNewQueueTracks(app);
+  });
+
+  mopidy.on("event:trackPlaybackStarted", function (data) {
+    changeQueuePlayState(app, data);
+  });
+  mopidy.on("event:trackPlaybackResumed", function (data) {
+    changeQueuePlayState(app, data);
+  });
+}
+
+function initUi(app) {
+  mopidy.on("state:online", function () {
+    window.mopidy = mopidy;
+    getNewQueueTracks(app);
+
+    setEvents(app);
+  });
+}
+
 var App = function (_React$Component6) {
   _inherits(App, _React$Component6);
 
-  function App() {
+  function App(props) {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    var _this6 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+    _this6.state = {
+      "tracks": [],
+      "nowPlaying": {}
+    };
+    initUi(_this6);
+    return _this6;
   }
 
   _createClass(App, [{
@@ -10453,8 +10521,8 @@ var App = function (_React$Component6) {
         _react2.default.createElement(
           'div',
           { className: 'play-area' },
-          _react2.default.createElement(Queue, null),
-          _react2.default.createElement(NowPlaying, null)
+          _react2.default.createElement(Queue, { tracks: this.state.tracks, curr: this.state.nowPlaying }),
+          _react2.default.createElement(NowPlaying, { curr: this.state.nowPlaying })
         )
       );
     }
