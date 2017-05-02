@@ -63,7 +63,9 @@ class Queue extends React.Component {
     </table>
     )
     return (
-      (this.props.tracks.length > 0) ? queueTable : <p className="queue">No songs in queue</p>
+      <div className="queue-scroll">
+        {(this.props.tracks.length > 0) ? queueTable : <p className="queue">No songs in queue</p>}
+      </div>
     )
   }
 }
@@ -77,9 +79,11 @@ class QueueEntry extends React.Component {
     const currentlyPlaying = this.props.nowPlaying;
     const track = this.props.track;
     return (
-      // <tr className={"queue-entry"}>
         <tr className={(currentlyPlaying) ? "queue-entry active" : "queue-entry"}>
-          <td>{track.name}</td>
+          <td>
+            <i className="fa fa-play" aria-hidden="true"></i>
+            {track.name}
+          </td>
           <td>{track.artist}</td>
           <td>{track.album}</td>
         </tr>
@@ -190,6 +194,18 @@ function getCurrentTrack(app, data) {
   }
 }
 
+function clearNowPlaying(app){
+  var track = {
+    "artUri": "./img/coolAlbumArt.png",
+    "name": "Nothing",
+    "artist": "Nada",
+    "album": "Zilch"
+  }
+  app.setState({
+    "nowPlaying": track
+  })
+}
+
 function setEvents(app){
    mopidy.on('event:tracklistChanged', function(){
     getNewQueueTracks(app);
@@ -202,6 +218,12 @@ function setEvents(app){
     mopidy.on("event:trackPlaybackResumed", function(data){
       getCurrentTrack(app, data);
     });
+
+    mopidy.on("event:playbackStateChanged", function(data){
+      if(data.old_state == "playing" && data.new_state == "stopped"){
+        clearNowPlaying(app);
+      }
+    })
 }
 
 function initUi(app){

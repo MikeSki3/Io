@@ -9,20 +9,31 @@
     padding: 30px;
 }
 
+.queue-entry td i.fa.fa-play{
+    padding-right: 10px;
+    display: none;
+}
+
+.active {
+    background-color: beige;
+}
+
+.active td i.fa.fa-play {
+    display: inline-block;
+}
+
 .queue {
     border-collapse: collapse;
-    margin-right: auto;
+    position: relative;
+    top: 500px;
+    /*margin-right: auto;
     margin-left: 5%;
-    width: 50%;
+    width: 50%;*/
 }
 
 .page-header {
     font-size: xx-large;
     margin-left: 30px;
-}
-
-.active {
-    background-color: beige;
 }
 
 .now-playing {
@@ -42,4 +53,9 @@
 .play-area {
     display: flex;
     justify-content: center;
+}
+
+.queue-scroll {
+    height: 1000px;
+    overflow: hidden;
 }

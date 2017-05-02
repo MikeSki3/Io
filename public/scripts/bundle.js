@@ -10225,10 +10225,14 @@ var Queue = function (_React$Component2) {
           tracks
         )
       );
-      return this.props.tracks.length > 0 ? queueTable : _react2.default.createElement(
-        'p',
-        { className: 'queue' },
-        'No songs in queue'
+      return _react2.default.createElement(
+        'div',
+        { className: 'queue-scroll' },
+        this.props.tracks.length > 0 ? queueTable : _react2.default.createElement(
+          'p',
+          { className: 'queue' },
+          'No songs in queue'
+        )
       );
     }
   }]);
@@ -10255,26 +10259,24 @@ var QueueEntry = function (_React$Component3) {
     value: function render() {
       var currentlyPlaying = this.props.nowPlaying;
       var track = this.props.track;
-      return (
-        // <tr className={"queue-entry"}>
+      return _react2.default.createElement(
+        'tr',
+        { className: currentlyPlaying ? "queue-entry active" : "queue-entry" },
         _react2.default.createElement(
-          'tr',
-          { className: currentlyPlaying ? "queue-entry active" : "queue-entry" },
-          _react2.default.createElement(
-            'td',
-            null,
-            track.name
-          ),
-          _react2.default.createElement(
-            'td',
-            null,
-            track.artist
-          ),
-          _react2.default.createElement(
-            'td',
-            null,
-            track.album
-          )
+          'td',
+          null,
+          _react2.default.createElement('i', { className: 'fa fa-play', 'aria-hidden': 'true' }),
+          track.name
+        ),
+        _react2.default.createElement(
+          'td',
+          null,
+          track.artist
+        ),
+        _react2.default.createElement(
+          'td',
+          null,
+          track.album
         )
       );
     }
@@ -10426,6 +10428,18 @@ function getCurrentTrack(app, data) {
   }
 }
 
+function clearNowPlaying(app) {
+  var track = {
+    "artUri": "./img/coolAlbumArt.png",
+    "name": "Nothing",
+    "artist": "Nada",
+    "album": "Zilch"
+  };
+  app.setState({
+    "nowPlaying": track
+  });
+}
+
 function setEvents(app) {
   mopidy.on('event:tracklistChanged', function () {
     getNewQueueTracks(app);
@@ -10437,6 +10451,12 @@ function setEvents(app) {
 
   mopidy.on("event:trackPlaybackResumed", function (data) {
     getCurrentTrack(app, data);
+  });
+
+  mopidy.on("event:playbackStateChanged", function (data) {
+    if (data.old_state == "playing" && data.new_state == "stopped") {
+      clearNowPlaying(app);
+    }
   });
 }
 
