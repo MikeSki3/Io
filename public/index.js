@@ -2,12 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Mopidy from 'mopidy';
 import config from './../config/config.json'
+import jquery from 'jquery';
 
 var mopidy = new Mopidy({
   webSocketUrl: "ws://localhost:6680/mopidy/ws"
 });
 
 mopidy.on(console.log.bind(console));
+window.jquery = jquery;
 
 function parseTrack(track) {
   var tlid = track.tlid;
@@ -74,6 +76,18 @@ class QueueEntry extends React.Component {
   // constructor(props){
   //   super(props);
   // }
+
+  componentDidUpdate() {
+    var activeEntry = jquery('.queue-entry.active');
+    var position = activeEntry.offset().top;
+    var posMid = activeEntry.height() / 2;
+    var winMid = jquery(window).height() / 2;
+    if(posMid + position > winMid){
+      var queue = jquery('.queue');
+      var currTop = parseInt(queue.css('top'));
+      queue.css('top', (currTop - posMid * 2) + "px");
+    }
+  }
 
   render() {
     const currentlyPlaying = this.props.nowPlaying;

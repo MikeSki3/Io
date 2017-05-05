@@ -25,10 +25,12 @@
 .queue {
     border-collapse: collapse;
     position: relative;
-    top: 500px;
-    /*margin-right: auto;
-    margin-left: 5%;
-    width: 50%;*/
+    -webkit-transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+    transition: top 0.5s;
+    top: 0px;
 }
 
 .page-header {
@@ -53,9 +55,9 @@
 .play-area {
     display: flex;
     justify-content: center;
+    height: 85vh;
 }
 
 .queue-scroll {
-    height: 1000px;
     overflow: hidden;
 }
