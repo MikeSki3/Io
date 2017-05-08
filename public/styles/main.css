@@ -31,16 +31,27 @@
     transition-timing-function: ease-in-out;
     transition: top 0.5s;
     top: 0px;
+    width: 100%;
 }
 
 .page-header {
     font-size: xx-large;
-    margin-left: 30px;
+    border-radius: 10px;
+    background-color: mintcream;
+    padding: 3px;
+    text-align: center;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 .now-playing {
-    margin-right: 100px;
-    width: 30%
+    background-color: mintcream;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 15px;
+    margin-top: 8%;
+    border-radius: 5px;
+    margin-bottom: 8%;
 }
 
 .now-playing img {
@@ -54,10 +65,22 @@
 
 .play-area {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     height: 85vh;
 }
 
 .queue-scroll {
     overflow: hidden;
+    background-color: mintcream;
+    margin-top: 30px;
+    border-radius: 5px;
+    width: 70%;
+}
+
+.queue-scroll p {
+    font-size: xx-large;
+}
+
+html {
+    background-color: rgba(0, 84, 173, 0.7);
 }
