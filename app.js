@@ -87,10 +87,11 @@ function sendResponse(twiml, res, message) {
 
 function makeSelection(textBod, phoneNum, twiml, req, res, message, currUser) {
     let songs = currUser.results;
-    if (textBod == "!") {
-        message = "Oh shit you don canceled it!";
-        delete req.session.users[phoneNum];
-    } else if (textBod == ">" || textBod == "<") {
+    // if (textBod == "!") {
+    //     message = "Oh shit you don canceled it!";
+    //     delete req.session.users[phoneNum];
+    // } else 
+    if (textBod == ">" || textBod == "<") {
         let add = (textBod == ">") ? 1 : -1;
         if ((currUser.page + add) * 3 >= songs.length) {
             message = "Already on the last page";
@@ -105,7 +106,10 @@ function makeSelection(textBod, phoneNum, twiml, req, res, message, currUser) {
         mopidy.addToQueue(songs[textBod].uri, true);
         delete req.session.users[phoneNum];
     } else {
-        message = "Don't be an ass, just make a song choice...or '!' to cancel";
+        // message = "Don't be an ass, just make a song choice...or '!' to cancel";
+        delete req.session.users[phoneNum];
+        search(textBod, phoneNum, twiml, req, res, message);
+        return;
     }
     sendResponse(twiml, res, message);
 }
@@ -118,7 +122,7 @@ function search(textBod, phoneNum, twiml, req, res, message) {
     mopidy.searchMopidy(textBod).then(function (results) {
         let tracks = results[0].tracks;
         if (tracks) {
-            message = "Respond with song choice, '>' for more results, '<' for previous results, or '!' to cancel\n";
+            message = "Respond with song choice, '>' for more results, or '<' for previous results\n";
             //put 15 of the results in the cookie
             let limit = tracks.length < 15 ? tracks.length : 15;
             for (var i = 0; i < limit; i++) {
