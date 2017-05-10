@@ -240,6 +240,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -20520,13 +20524,15 @@ var QueueEntry = function (_React$Component3) {
 
     value: function componentDidUpdate() {
       var activeEntry = (0, _jquery2.default)('.queue-entry.active');
-      var position = activeEntry.offset().top;
-      var posMid = activeEntry.height() / 2;
-      var winMid = (0, _jquery2.default)(window).height() / 2;
-      if (posMid + position > winMid) {
-        var queue = (0, _jquery2.default)('.queue');
-        var currTop = parseInt(queue.css('top'));
-        queue.css('top', currTop - posMid * 2 + "px");
+      if (activeEntry.length > 0) {
+        var position = activeEntry.offset().top;
+        var posMid = activeEntry.height() / 2;
+        var winMid = (0, _jquery2.default)(window).height() / 2;
+        if (posMid + position > winMid) {
+          var queue = (0, _jquery2.default)('.queue');
+          var currTop = parseInt(queue.css('top'));
+          queue.css('top', currTop - posMid * 2 + "px");
+        }
       }
     }
   }, {
@@ -20625,7 +20631,11 @@ var NowPlaying = function (_React$Component5) {
           this.props.track.album
         )
       );
-      return nowPlayingDiv;
+      return _react2.default.createElement(
+        'div',
+        null,
+        nowPlayingDiv
+      );
     }
   }]);
 
@@ -22108,6 +22118,20 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       return emptyFunction.thatReturnsNull;
     }
 
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        warning(
+          false,
+          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'received %s at index %s.',
+          getPostfixForTypeWarning(checker),
+          i
+        );
+        return emptyFunction.thatReturnsNull;
+      }
+    }
+
     function validate(props, propName, componentName, location, propFullName) {
       for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
         var checker = arrayOfTypeCheckers[i];
@@ -22240,6 +22264,9 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   // This handles more types than `getPropType`. Only used for error messages.
   // See `createPrimitiveTypeChecker`.
   function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
     var propType = getPropType(propValue);
     if (propType === 'object') {
       if (propValue instanceof Date) {
@@ -22249,6 +22276,23 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       }
     }
     return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
   }
 
   // Returns class name of the object, if any.

@@ -49,9 +49,11 @@
     padding-right: 15px;
     padding-left: 15px;
     padding-top: 15px;
-    margin-top: 8%;
+    margin-top: 30px;
     border-radius: 5px;
-    margin-bottom: 8%;
+    display: inline-block;
+    padding-bottom: 15px;
+    /*margin-bottom: 8%;*/
 }
 
 .now-playing img {
@@ -79,6 +81,7 @@
 
 .queue-scroll p {
     font-size: xx-large;
+    text-align: center;
 }
 
 html {

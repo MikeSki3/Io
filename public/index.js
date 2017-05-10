@@ -79,13 +79,15 @@ class QueueEntry extends React.Component {
 
   componentDidUpdate() {
     var activeEntry = jquery('.queue-entry.active');
-    var position = activeEntry.offset().top;
-    var posMid = activeEntry.height() / 2;
-    var winMid = jquery(window).height() / 2;
-    if(posMid + position > winMid){
-      var queue = jquery('.queue');
-      var currTop = parseInt(queue.css('top'));
-      queue.css('top', (currTop - posMid * 2) + "px");
+    if(activeEntry.length > 0){
+      var position = activeEntry.offset().top;
+      var posMid = activeEntry.height() / 2;
+      var winMid = jquery(window).height() / 2;
+      if(posMid + position > winMid){
+        var queue = jquery('.queue');
+        var currTop = parseInt(queue.css('top'));
+        queue.css('top', (currTop - posMid * 2) + "px");
+      }
     }
   }
 
@@ -132,7 +134,9 @@ class NowPlaying extends React.Component {
       </div>
     )
     return (
-      nowPlayingDiv
+      <div>
+        {nowPlayingDiv}
+      </div>
     )
   }
 }
