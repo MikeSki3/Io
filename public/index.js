@@ -3,10 +3,16 @@ import ReactDOM from 'react-dom';
 import Mopidy from 'mopidy';
 import config from './../config/config.json'
 import jquery from 'jquery';
+import ProgressBar from 'progressbar.js';
 
 var mopidy = new Mopidy({
   webSocketUrl: "ws://localhost:6680/mopidy/ws"
 });
+var trackProgressBar;
+
+// = new ProgressBar.Line('#progress', {
+//   color: '#FCB03C'
+// });
 
 mopidy.on(console.log.bind(console));
 window.jquery = jquery;
@@ -19,17 +25,9 @@ function parseTrack(track) {
     "artist": track.artists[0].name,
     "album": track.album.name,
     "uri": track.uri,
-    "key": track.uri + "_" + tlid
+    "key": track.uri + "_" + tlid,
+    "length": track.length
   }
-}
-
-function populateComponent(comp, data){
-  comp.setState(prevState => ({
-  "tracks": data.map((track) => 
-    <QueueEntry track={parseTrack(track)}  key={track.track.uri + "_" + track.tlid}/>
-  ),
-  "songsPresent": true 
-  }));
 }
 
 class QueueHeader extends React.Component {
@@ -119,10 +117,23 @@ class PageHeader extends React.Component {
   }
 }
 
+// event:trackPlaybackStarted - object:tl_track
+// event:trackPlaybackPaused - object: int:time_position, object:tl_track
+// event:trackPlaybackResumed - object: int:time_position, object:tl_track
+
 class NowPlaying extends React.Component {
   // constructor(props){
   //   super(props);
   // }
+
+  componentDidMount(){
+    if(!trackProgressBar) {
+      trackProgressBar = new ProgressBar.Line('#progress', {
+        color: '#FCB03C',
+        strokeWidth: 2.5
+      });
+    }
+  }
 
   render(){
     const nowPlayingDiv = (
@@ -131,6 +142,7 @@ class NowPlaying extends React.Component {
         <div>{this.props.track.name}</div>
         <div>{this.props.track.artist}</div>
         <div>{this.props.track.album}</div>
+        <div className="progress" id="progress"></div>
       </div>
     )
     return (
@@ -177,26 +189,30 @@ function getNewQueueTracks(app){
 function getCurrentTrack(app, data) {
   var track = {};
   var getTrackArt = function(trackMinusArt){
-    track = parseTrack((trackMinusArt.tl_track) ? trackMinusArt.tl_track : trackMinusArt);
-    return mopidy.library.getImages([track.uri]);
+    // track = parseTrack((trackMinusArt.tl_track) ? trackMinusArt.tl_track : trackMinusArt);
+    return mopidy.library.getImages([trackMinusArt.uri]);
   }
 
   if(data){
+    var trackData = data;
     getTrackArt(data).then(function (data) {
-      track.artUri = data[track.uri][0].uri;
+      trackData.artUri = data[trackData.uri][0].uri;
       app.setState({
-        "nowPlaying": track
+        "nowPlaying": trackData
       });
     });
+    setProgressBar(data.length);
   } else {
     mopidy.playback.getCurrentTlTrack().then(function (data) {
       if (data != null) {
-        getTrackArt(data).then(function (data) {
+        track = parseTrack(data);
+        getTrackArt(track).then(function (data) {
           track.artUri = data[track.uri][0].uri;
           app.setState({
             "nowPlaying": track
           });
         });
+        setProgressBar(track.length);
       } else {
         track = {
           "artUri": "./img/coolAlbumArt.png",
@@ -222,26 +238,57 @@ function clearNowPlaying(app){
   app.setState({
     "nowPlaying": track
   })
+  trackProgressBar.stop();
+  trackProgressBar.set(0);
+}
+
+function startProgressBar(){
+  trackProgressBar.animate(1);
+}
+
+function pauseProgressBar(){
+  trackProgressBar.stop();
+}
+
+function setProgressBar(duration, currPosition){
+  trackProgressBar = new ProgressBar.Line('#progress', {
+    color: '#FCB03C',
+    strokeWidth: 2.5,
+    duration: duration
+  });
+  if(currPosition){
+    trackProgressBar.set(currPosition);
+  } else {
+    mopidy.playback.getTimePosition().then(function (data) {
+      trackProgressBar.set(data);
+    });
+  }
 }
 
 function setEvents(app){
    mopidy.on('event:tracklistChanged', function(){
-    getNewQueueTracks(app);
+      getNewQueueTracks(app);
    });
 
    mopidy.on("event:trackPlaybackStarted", function(data){
-      getCurrentTrack(app, data);
+      getCurrentTrack(app, parseTrack(data.tl_track));
+      setProgressBar(data.tl_track.track.length);
     });
     
     mopidy.on("event:trackPlaybackResumed", function(data){
-      getCurrentTrack(app, data);
+      getCurrentTrack(app, parseTrack(data.tl_track));
+      setProgressBar(data.tl_track.track.length, data.time_position);
     });
 
     mopidy.on("event:playbackStateChanged", function(data){
       if(data.old_state == "playing" && data.new_state == "stopped"){
         clearNowPlaying(app);
       }
-    })
+    });
+
+    mopidy.on("event:trackPlaybackPaused", function(data) {
+      pauseProgressBar();
+    });
 }
 
 function initUi(app){
