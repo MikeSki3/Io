@@ -186,7 +186,7 @@ function getNewQueueTracks(app){
   });
 }
 
-function getCurrentTrack(app, data) {
+function getCurrentTrack(app, data, currPosition, animateBar) {
   var track = {};
   var getTrackArt = function(trackMinusArt){
     // track = parseTrack((trackMinusArt.tl_track) ? trackMinusArt.tl_track : trackMinusArt);
@@ -201,7 +201,7 @@ function getCurrentTrack(app, data) {
         "nowPlaying": trackData
       });
     });
-    setProgressBar(data.length);
+    setProgressBar(data.length, currPosition, animateBar);
   } else {
     mopidy.playback.getCurrentTlTrack().then(function (data) {
       if (data != null) {
@@ -212,7 +212,7 @@ function getCurrentTrack(app, data) {
             "nowPlaying": track
           });
         });
-        setProgressBar(track.length);
+        setProgressBar(track.length, currPosition, animateBar);
       } else {
         track = {
           "artUri": "./img/coolAlbumArt.png",
@@ -250,17 +250,22 @@ function pauseProgressBar(){
   trackProgressBar.stop();
 }
 
-function setProgressBar(duration, currPosition){
+function setProgressBar(duration, currPosition, animateBar){
+  if(trackProgressBar){
+    trackProgressBar.destroy();
+  }
   trackProgressBar = new ProgressBar.Line('#progress', {
     color: '#FCB03C',
     strokeWidth: 2.5,
     duration: duration
   });
   if(currPosition){
-    trackProgressBar.set(currPosition);
+    trackProgressBar.set((duration/currPosition));
+    if(animateBar){trackProgressBar.animate(1)};
   } else {
     mopidy.playback.getTimePosition().then(function (data) {
-      trackProgressBar.set(data);
+      trackProgressBar.set((data/duration));
+      if(animateBar){trackProgressBar.animate(1)};
     });
   }
 }
@@ -271,13 +276,13 @@ function setEvents(app){
    });
 
    mopidy.on("event:trackPlaybackStarted", function(data){
-      getCurrentTrack(app, parseTrack(data.tl_track));
-      setProgressBar(data.tl_track.track.length);
+      getCurrentTrack(app, parseTrack(data.tl_track), null, true);
+      // setProgressBar(data.tl_track.track.length, null, true);
     });
     
     mopidy.on("event:trackPlaybackResumed", function(data){
-      getCurrentTrack(app, parseTrack(data.tl_track));
-      setProgressBar(data.tl_track.track.length, data.time_position);
+      getCurrentTrack(app, parseTrack(data.tl_track), data.time_position, true);
+      // setProgressBar(data.tl_track.track.length, data.time_position, true);
     });
 
     mopidy.on("event:playbackStateChanged", function(data){
