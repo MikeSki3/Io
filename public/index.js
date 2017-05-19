@@ -260,7 +260,7 @@ function setProgressBar(duration, currPosition, animateBar){
     duration: duration
   });
   if(currPosition){
-    trackProgressBar.set((duration/currPosition));
+    trackProgressBar.set((currPosition/duration));
     if(animateBar){trackProgressBar.animate(1)};
   } else {
     mopidy.playback.getTimePosition().then(function (data) {
