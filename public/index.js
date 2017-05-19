@@ -142,7 +142,10 @@ class NowPlaying extends React.Component {
         <div>{this.props.track.name}</div>
         <div>{this.props.track.artist}</div>
         <div>{this.props.track.album}</div>
+        <div className="song-duration">
         <div className="progress" id="progress"></div>
+        <div className="song-time"></div>
+        </div>
       </div>
     )
     return (

@@ -87,3 +87,11 @@
 html {
     background-color: rgba(0, 84, 173, 0.7);
 }
+
+.song-duration {
+    display: inline-flex;
+}
+
+.song-time {
+    font-size: small;
+}
