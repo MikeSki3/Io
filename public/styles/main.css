@@ -58,6 +58,9 @@
 
 .now-playing img {
     height: 300px;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .now-playing div {
@@ -90,8 +93,13 @@ html {
 
 .song-duration {
     display: inline-flex;
+    width: 100%
+}
+
+.progress {
+    width: 100%
 }
 
 .song-time {
-    font-size: small;
+    font-size: small !important;
 }

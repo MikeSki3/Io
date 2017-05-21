@@ -10426,10 +10426,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/** @license MIT License (c) copyright 2010-20
 /***/ (function(module, exports) {
 
 module.exports = {
-	"SESSION_SECRET": "a_secret_i_know",
-	"TWILIO_SID": "AC47f9cdb2e2ab047a40b5ad7895249bfe",
-	"TWILIO_AUTH_TOKEN": "47ef1fb4b5c2f3e310ceffc1b3f4bdf0",
-	"TWILIO_NUM": "+19203951604",
+	"SESSION_SECRET": "dis_secret_do",
 	"TWILIO_NUM_PRETTY": "(920) 395-1604"
 };
 
@@ -21122,13 +21119,9 @@ var mopidy = new _mopidy2.default({
   webSocketUrl: "ws://localhost:6680/mopidy/ws"
 });
 var trackProgressBar;
-
-// = new ProgressBar.Line('#progress', {
-//   color: '#FCB03C'
-// });
+var timerId;
 
 mopidy.on(console.log.bind(console));
-window.jquery = _jquery2.default;
 
 function parseTrack(track) {
   var tlid = track.tlid;
@@ -21360,7 +21353,12 @@ var NowPlaying = function (_React$Component5) {
           null,
           this.props.track.album
         ),
-        _react2.default.createElement('div', { className: 'progress', id: 'progress' })
+        _react2.default.createElement(
+          'div',
+          { className: 'song-duration' },
+          _react2.default.createElement('div', { className: 'progress', id: 'progress' }),
+          _react2.default.createElement('div', { className: 'song-time' })
+        )
       );
       return _react2.default.createElement(
         'div',
@@ -21468,6 +21466,7 @@ function startProgressBar() {
 
 function pauseProgressBar() {
   trackProgressBar.stop();
+  clearInterval(timerId);
 }
 
 function setProgressBar(duration, currPosition, animateBar) {
@@ -21484,14 +21483,53 @@ function setProgressBar(duration, currPosition, animateBar) {
     if (animateBar) {
       trackProgressBar.animate(1);
     };
+    setTimer(duration, currPosition, animateBar);
   } else {
     mopidy.playback.getTimePosition().then(function (data) {
       trackProgressBar.set(data / duration);
       if (animateBar) {
         trackProgressBar.animate(1);
       };
+      setTimer(duration, data, animateBar);
     });
   }
+}
+
+function setTimer(duration, currTime, startTimer) {
+  if (timerId) {
+    clearInterval(timerId);
+  }
+  var timerDiv = (0, _jquery2.default)(".song-time");
+  var durMinutes = getMinutes(duration);
+  var currMinutes = getMinutes(currTime);
+  var durSeconds = getSeconds(duration);
+  var currSeconds = getSeconds(currTime);
+
+  if (startTimer) {
+    timerId = setInterval(function () {
+      timerDiv.text(currMinutes + ":" + padNumber(currSeconds) + "/" + durMinutes + ":" + padNumber(durSeconds));
+      if (currSeconds == 59) {
+        currMinutes++;
+        currSeconds = 0;
+      } else {
+        currSeconds++;
+      }
+    }, 1000);
+  } else {
+    timerDiv.text(currMinutes + ":" + padNumber(currSeconds) + "/" + durMinutes + ":" + padNumber(durSeconds));
+  }
+}
+
+function padNumber(time) {
+  return time < 10 ? "0" + time : time;
+}
+
+function getMinutes(timeInMiliseconds) {
+  return Math.floor(timeInMiliseconds / 60000);
+}
+
+function getSeconds(timeInMiliseconds) {
+  return Math.round((timeInMiliseconds / 60000 - getMinutes(timeInMiliseconds)) * 60);
 }
 
 function setEvents(app) {

@@ -9,13 +9,9 @@ var mopidy = new Mopidy({
   webSocketUrl: "ws://localhost:6680/mopidy/ws"
 });
 var trackProgressBar;
-
-// = new ProgressBar.Line('#progress', {
-//   color: '#FCB03C'
-// });
+var timerId;
 
 mopidy.on(console.log.bind(console));
-window.jquery = jquery;
 
 function parseTrack(track) {
   var tlid = track.tlid;
@@ -143,8 +139,8 @@ class NowPlaying extends React.Component {
         <div>{this.props.track.artist}</div>
         <div>{this.props.track.album}</div>
         <div className="song-duration">
-        <div className="progress" id="progress"></div>
-        <div className="song-time"></div>
+          <div className="progress" id="progress"></div>
+          <div className="song-time"></div>
         </div>
       </div>
     )
@@ -251,6 +247,7 @@ function startProgressBar(){
 
 function pauseProgressBar(){
   trackProgressBar.stop();
+  clearInterval(timerId);
 }
 
 function setProgressBar(duration, currPosition, animateBar){
@@ -265,12 +262,51 @@ function setProgressBar(duration, currPosition, animateBar){
   if(currPosition){
     trackProgressBar.set((currPosition/duration));
     if(animateBar){trackProgressBar.animate(1)};
+    setTimer(duration, currPosition, animateBar);
   } else {
     mopidy.playback.getTimePosition().then(function (data) {
       trackProgressBar.set((data/duration));
       if(animateBar){trackProgressBar.animate(1)};
+      setTimer(duration, data, animateBar);
     });
   }
+}
+
+function setTimer(duration, currTime, startTimer){
+  if(timerId) {
+    clearInterval(timerId);
+  }
+  let timerDiv = jquery(".song-time");
+  let durMinutes = getMinutes(duration);
+  let currMinutes = getMinutes(currTime);
+  let durSeconds = getSeconds(duration);
+  let currSeconds = getSeconds(currTime);
+
+  if(startTimer){
+    timerId = setInterval(function(){
+      timerDiv.text(currMinutes + ":" + padNumber(currSeconds) + "/" + durMinutes + ":" + padNumber(durSeconds));
+      if(currSeconds == 59) {
+        currMinutes++;
+        currSeconds = 0;
+      } else {
+        currSeconds++;
+      }
+    }, 1000);
+  } else {
+    timerDiv.text(currMinutes + ":" + padNumber(currSeconds) + "/" + durMinutes + ":" + padNumber(durSeconds));
+  }
+}
+
+function padNumber(time){
+  return (time < 10) ? "0" + time : time;
+}
+
+function getMinutes(timeInMiliseconds){
+  return Math.floor(timeInMiliseconds/60000);
+}
+
+function getSeconds(timeInMiliseconds){
+  return Math.round(((timeInMiliseconds/60000) - getMinutes(timeInMiliseconds)) * 60)
 }
 
 function setEvents(app){
