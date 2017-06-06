@@ -21240,14 +21240,17 @@ var QueueEntry = function (_React$Component3) {
 
     value: function componentDidUpdate() {
       var activeEntry = (0, _jquery2.default)('.queue-entry.active');
+      var scroll = (0, _jquery2.default)('.queue-scroll');
+      var queue = (0, _jquery2.default)('.queue');
       if (activeEntry.length > 0) {
         var position = activeEntry.offset().top;
         var posMid = activeEntry.height() / 2;
         var winMid = (0, _jquery2.default)(window).height() / 2;
         if (posMid + position > winMid) {
-          var queue = (0, _jquery2.default)('.queue');
           var currTop = parseInt(queue.css('top'));
           queue.css('top', currTop - posMid * 2 + "px");
+        } else if (position < scroll.offset().top) {
+          queue.css('top', scroll.offset().top + "px");
         }
       }
     }
@@ -21360,7 +21363,12 @@ var NowPlaying = function (_React$Component5) {
           null,
           this.props.track.album
         ),
-        _react2.default.createElement('div', { className: 'progress', id: 'progress' })
+        _react2.default.createElement(
+          'div',
+          { className: 'song-duration' },
+          _react2.default.createElement('div', { className: 'progress', id: 'progress' }),
+          _react2.default.createElement('div', { className: 'song-time' })
+        )
       );
       return _react2.default.createElement(
         'div',
@@ -21377,6 +21385,7 @@ function getQueueEntryArray(nowPlayingKey, data) {
   var tracks = [];
   for (var i = 0; i < data.length; i++) {
     var track = data[i];
+    console.log("Now Playing Key: " + nowPlayingKey + " Curr Track Key: " + track.key + (nowPlayingKey == track.key ? " DIS ONE" : ""));
     tracks.push(_react2.default.createElement(QueueEntry, { track: track, key: track.key, nowPlaying: nowPlayingKey == track.key }));
   }
   return tracks;
@@ -21510,7 +21519,7 @@ function setEvents(app) {
   });
 
   mopidy.on("event:playbackStateChanged", function (data) {
-    if (data.old_state == "playing" && data.new_state == "stopped") {
+    if (data.old_state == "playing" && data.new_state == "stopped" || data.old_state == "paused" && data.new_state == "stopped") {
       clearNowPlaying(app);
     }
   });

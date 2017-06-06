@@ -77,14 +77,17 @@ class QueueEntry extends React.Component {
 
   componentDidUpdate() {
     var activeEntry = jquery('.queue-entry.active');
+    var scroll = jquery('.queue-scroll');
+    var queue = jquery('.queue');
     if(activeEntry.length > 0){
       var position = activeEntry.offset().top;
       var posMid = activeEntry.height() / 2;
       var winMid = jquery(window).height() / 2;
       if(posMid + position > winMid){
-        var queue = jquery('.queue');
         var currTop = parseInt(queue.css('top'));
         queue.css('top', (currTop - posMid * 2) + "px");
+      } else if(position < scroll.offset().top){
+        queue.css('top', (scroll.offset().top) + "px");
       }
     }
   }
@@ -160,6 +163,7 @@ function getQueueEntryArray(nowPlayingKey, data){
   var tracks = [];
   for(var i = 0; i < data.length; i++){
     var track = data[i];
+    console.log("Now Playing Key: " + nowPlayingKey + " Curr Track Key: " + track.key + ((nowPlayingKey == track.key) ? " DIS ONE" : ""));
     tracks.push(<QueueEntry track={track}  key={track.key} nowPlaying={nowPlayingKey == track.key}/>);
   }
   return tracks;
@@ -289,7 +293,7 @@ function setEvents(app){
     });
 
     mopidy.on("event:playbackStateChanged", function(data){
-      if(data.old_state == "playing" && data.new_state == "stopped"){
+      if((data.old_state == "playing" && data.new_state == "stopped") || (data.old_state == "paused" && data.new_state == "stopped")){
         clearNowPlaying(app);
       }
     });
