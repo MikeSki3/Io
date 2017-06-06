@@ -1,0 +1,487 @@
+{
+	"jsonrpc": "2.0",
+	"id": 1,
+	"result": [
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "the ends",
+				"disc_no": 1,
+				"uri": "spotify:track:33zbOXJSwW7uf4VXXWow2O",
+				"length": 201000,
+				"track_no": 1,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 15
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "way back",
+				"disc_no": 1,
+				"uri": "spotify:track:2Zy7XVdxyZQB8xp5xbpJdl",
+				"length": 273000,
+				"track_no": 2,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 16
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "coordinate",
+				"disc_no": 1,
+				"uri": "spotify:track:7pas6O1LYbaeChEFQBhPFU",
+				"length": 226000,
+				"track_no": 3,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 17
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "through the late night",
+				"disc_no": 1,
+				"uri": "spotify:track:1Ci4wASMY4xtKVMeHA6Sd5",
+				"length": 286000,
+				"track_no": 4,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 18
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "beibs in the trap",
+				"disc_no": 1,
+				"uri": "spotify:track:0ESJlaM8CE1jRWaNtwSNj8",
+				"length": 214000,
+				"track_no": 5,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 19
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "sdp interlude",
+				"disc_no": 1,
+				"uri": "spotify:track:4gh0ZnHzaTMT1sDga7Ek0N",
+				"length": 192000,
+				"track_no": 6,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 20
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "sweet sweet",
+				"disc_no": 1,
+				"uri": "spotify:track:01Ch5LzVStxCFPKkT1xg6k",
+				"length": 222000,
+				"track_no": 7,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 21
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "outside",
+				"disc_no": 1,
+				"uri": "spotify:track:177WEvlLsCc0FzCTWslawr",
+				"length": 176000,
+				"track_no": 8,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 22
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "goosebumps",
+				"disc_no": 1,
+				"uri": "spotify:track:6gBFPUFcJLzWGx4lenP6h2",
+				"length": 244000,
+				"track_no": 9,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 23
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "first take",
+				"disc_no": 1,
+				"uri": "spotify:track:6wwruKU956ldDyz55DZTt1",
+				"length": 314000,
+				"track_no": 10,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 24
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "pick up the phone",
+				"disc_no": 1,
+				"uri": "spotify:track:20dP2DaMHIAmwWAbp7peSr",
+				"length": 252000,
+				"track_no": 11,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					},
+					{
+						"__model__": "Artist",
+						"name": "Young Thug",
+						"uri": "spotify:artist:50co4Is1HCEo8bhOyUWKpn"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 25
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "lose",
+				"disc_no": 1,
+				"uri": "spotify:track:2AGUFka8kBWCM47h5uTlDb",
+				"length": 200000,
+				"track_no": 12,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 26
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "guidance",
+				"disc_no": 1,
+				"uri": "spotify:track:2c2csx4OTYtbkzvbSTXlGY",
+				"length": 207000,
+				"track_no": 13,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 27
+		},
+		{
+			"track": {
+				"album": {
+					"date": "2016",
+					"__model__": "Album",
+					"artists": [
+						{
+							"__model__": "Artist",
+							"name": "Travis Scott",
+							"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+						}
+					],
+					"name": "Birds In The Trap Sing McKnight",
+					"uri": "spotify:album:42WVQWuf1teDysXiOupIZt"
+				},
+				"__model__": "Track",
+				"name": "wonderful",
+				"disc_no": 1,
+				"uri": "spotify:track:1cZlBZwnwGPtYeRIeQcoFh",
+				"length": 217000,
+				"track_no": 14,
+				"artists": [
+					{
+						"__model__": "Artist",
+						"name": "Travis Scott",
+						"uri": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY"
+					}
+				],
+				"date": "2016",
+				"bitrate": 160
+			},
+			"__model__": "TlTrack",
+			"tlid": 28
+		}
+	]
+}
